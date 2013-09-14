@@ -1,188 +1,110 @@
-describe('pizza pit', function () {
+describe('Sentinel Environment Service', function ()
+{
+    describe('SentinelEnvironmentService Integration Tests', function ()
+    {
+        var sentinelEnvironmentService;
+        beforeEach(module('sultanApp'));
+        beforeEach(inject(function (_sentinelEnvironmentService_)
+        {
+            sentinelEnvironmentService = _sentinelEnvironmentService_;
+        }));
 
-  var Person = function (name, $log) {
+        it('Angular module (sultanApp) should exist for these tests', function ()
+        {
+            expect(sultanApp).toBeDefined();
+        });
+        it('sentinelEnvironmentService should be injected into sultanApp', function ()
+        {
+            console.log(sentinelEnvironmentService.getAllEnvironments());
+            expect(sentinelEnvironmentService).toBeDefined();
+        });
+    }),
 
-    this.eat = function (food) {
-      $log.info(name + " is eating delicious " + food);
-    };
-    this.beHungry = function (reason) {
-      $log.warn(name + " is hungry because: " + reason);
-    };
-  };
 
-  var $q, $exceptionHandler, $log, $rootScope;
-  var servePreparedOrder, promisedOrder, pawel, pete;
-  beforeEach(inject(function (_$q_, _$exceptionHandler_, _$log_, _$rootScope_) {
-    $q = _$q_;
-    $exceptionHandler = _$exceptionHandler_;
-    $log = _$log_;
-    $rootScope = _$rootScope_;
-    pawel = new Person('Pawel', $log);
-    pete = new Person('Peter', $log);
-  }));
 
-  describe('pizza pit', function () {
+    describe('SentinelEnvironmentService object', function ()
+    {
+        var sentinelEnvironmentService;
+        beforeEach(module('sultanApp'));
+        beforeEach(inject(function (_sentinelEnvironmentService_)
+        {
+            sentinelEnvironmentService = _sentinelEnvironmentService_;
+        }));
+        it('Should initialize with zero environments', function ()
+        {
+            expect(sentinelEnvironmentService.getAllEnvironments().length).toEqual(0);
+        });
+        it('Should allow you to add 1 environment', function ()
+        {
+            var env = new SentinelEnvironment("envNamex", "dbServerx", "dbCatalogx", "srcPathx", "archPathx", "xsdPathx");
+            sentinelEnvironmentService.addEnvironment(env);
+            var allEnvs = sentinelEnvironmentService.getAllEnvironments();
+            expect(allEnvs.length).toEqual(1);
+            expect(allEnvs[0].EnvironmentName).toEqual("envNamex");
+        });
+        it('Should allow you to add 2 environments', function ()
+        {
+            var env1 = new SentinelEnvironment("envNamex1", "dbServerx1", "dbCatalogx1", "srcPathx1", "archPathx1", "xsdPathx1");
+            sentinelEnvironmentService.addEnvironment(env1);
+            var env2 = new SentinelEnvironment("envNamex2", "dbServerx2", "dbCatalogx2", "srcPathx2", "archPathx2", "xsdPathx2");
+            sentinelEnvironmentService.addEnvironment(env2);
+            var allEnvs = sentinelEnvironmentService.getAllEnvironments();
+            expect(allEnvs.length).toEqual(2);
+            expect(allEnvs[0].EnvironmentName).toEqual("envNamex1");
+            expect(allEnvs[1].EnvironmentName).toEqual("envNamex2");
+        });
+        it('Duplicate environment names are not allowed', function ()
+        {
+            var env1 = new SentinelEnvironment("envNamex", "dbServerx1", "dbCatalogx1", "srcPathx1", "archPathx1", "xsdPathx1");
+            var returnedEnv1 = sentinelEnvironmentService.addEnvironment(env1);
+            var env2 = new SentinelEnvironment("envNamex", "dbServerx2", "dbCatalogx2", "srcPathx2", "archPathx2", "xsdPathx2");
+            var returnedEnv1 = sentinelEnvironmentService.addEnvironment(env2);//this should return 'undefined'
+            var allEnvs = sentinelEnvironmentService.getAllEnvironments();
+            expect(allEnvs.length).toEqual(1);
+            expect(returnedEnv1).toEqual(undefined);
+            expect(allEnvs[0].EnvironmentName).toEqual("envNamex");
+        });
+        it('Should allow you to specify a subset of "Active" environments', function ()
+        {
+            var env1 = new SentinelEnvironment("envNamex1", "dbServerx1", "dbCatalogx1", "srcPathx1", "archPathx1", "xsdPathx1");
+            sentinelEnvironmentService.addEnvironment(env1);
+            var env2 = new SentinelEnvironment("envNamex2", "dbServerx2", "dbCatalogx2", "srcPathx2", "archPathx2", "xsdPathx2");
+            sentinelEnvironmentService.addEnvironment(env2);
+            var isActive1 = sentinelEnvironmentService.setEnvironmentActive(env1);
+            expect(isActive1).toEqual(true);
+            var allEnvs = sentinelEnvironmentService.getAllEnvironments();
+            expect(allEnvs[0].isActive).toEqual(true);
+            expect(allEnvs[1].isActive).toBeFalsy();
 
-    describe('$q used directly', function () {
+            var isActive2 = sentinelEnvironmentService.setEnvironmentActive(env2);
+            expect(isActive2).toEqual(true);
+            var allEnvs = sentinelEnvironmentService.getAllEnvironments();
+            expect(allEnvs[0].isActive).toEqual(true);
+            expect(allEnvs[1].isActive).toEqual(true);
+        });
 
-      it('should illustrate basic usage of $q', function () {
+    }),
 
-        //differed represents a task that will complete (or fail) in the future
-        var pizzaOrderFulfillment = $q.defer();
+    describe('A Single Sentinel Environment Entity (SentinelEnvironment)', function ()
+    {
+        it('should hold specific properties passed in constructor (EnvironmentName, DatabaseServer, DatabaseCatalog, DefaultSourcePath, DefaultArchivePath, DefaultXsdPath)', function ()
+        {
+            var sentinelEnvironment = new SentinelEnvironment("envNamex", "dbServerx", "dbCatalogx", "srcPathx", "archPathx", "xsdPathx");
+            expect(sentinelEnvironment.EnvironmentName).toEqual("envNamex", "ddd");
+            expect(sentinelEnvironment.DatabaseServer).toEqual("dbServerx");
+            expect(sentinelEnvironment.DatabaseCatalog).toEqual("dbCatalogx");
+            expect(sentinelEnvironment.DefaultSourcePath).toEqual("srcPathx");
+            expect(sentinelEnvironment.DefaultArchivePath).toEqual("archPathx");
+            expect(sentinelEnvironment.DefaultXsdPath).toEqual("xsdPathx");
+        });
+        it('should be instanciated with ALL contructor arguemnts', function ()
+        {
+            var sentinelEnvironment = new SentinelEnvironment("envNamex", "dbServerx", "dbCatalogx", "srcPathx", "archPathx");
+            expect(sentinelEnvironment.DefaultArchivePath).toBe(undefined);
+        });
 
-        //the task in the future comes with a promise of task completion (or failrue)
-        var pizzaDelivered = pizzaOrderFulfillment.promise;
+    }
+    );
 
-        pizzaDelivered.then(pawel.eat, pawel.beHungry);
 
-        pizzaOrderFulfillment.resolve('Margherita');
-        $rootScope.$digest();
-
-        expect($log.info.logs).toContain(['Pawel is eating delicious Margherita']);
-      });
-    });
-
-    describe('$q used in a service', function () {
-
-      var Restaurant = function ($q, $rootScope) {
-
-        var currentOrder;
-
-        this.takeOrder = function (orderedItems) {
-          currentOrder = {
-            deferred:$q.defer(),
-            items:orderedItems
-          };
-          return currentOrder.deferred.promise;
-        };
-
-        this.deliverOrder = function() {
-          currentOrder.deferred.resolve(currentOrder.items);
-          $rootScope.$digest();
-        };
-
-        this.problemWithOrder = function(reason) {
-          currentOrder.deferred.reject(reason);
-          $rootScope.$digest();
-        };
-      };
-
-      var slice = function(pizza) {
-        return "sliced "+pizza;
-      };
-
-      var pizzaPit, saladBar;
-      beforeEach(function () {
-        pizzaPit = new Restaurant($q, $rootScope);
-        saladBar = new Restaurant($q, $rootScope);
-      });
-
-      it('should illustrate promise rejection', function () {
-
-        pizzaPit = new Restaurant($q, $rootScope);
-        var pizzaDelivered = pizzaPit.takeOrder('Capricciosa');
-        pizzaDelivered.then(pawel.eat, pawel.beHungry);
-
-        pizzaPit.problemWithOrder('no Capricciosa, only Margherita left');
-        expect($log.warn.logs).toContain(['Pawel is hungry because: no Capricciosa, only Margherita left']);
-      });
-
-      it('should allow callbacks aggregation', function () {
-
-        var pizzaDelivered = pizzaPit.takeOrder('Margherita');
-        pizzaDelivered.then(pawel.eat, pawel.beHungry);
-        pizzaDelivered.then(pete.eat, pete.beHungry);
-
-        pizzaPit.deliverOrder();
-        expect($log.info.logs).toContain(['Pawel is eating delicious Margherita']);
-        expect($log.info.logs).toContain(['Peter is eating delicious Margherita']);
-      });
-
-      it('should illustrate successful promise chaining', function () {
-
-        var slice = function(pizza) {
-          return "sliced "+pizza;
-        };
-
-        pizzaPit.takeOrder('Margherita').then(slice).then(pawel.eat);
-
-        pizzaPit.deliverOrder();
-        expect($log.info.logs).toContain(['Pawel is eating delicious sliced Margherita']);
-      });
-
-      it('should illustrate promise rejection in chain', function () {
-
-        pizzaPit.takeOrder('Capricciosa').then(slice).then(pawel.eat, pawel.beHungry);
-
-        pizzaPit.problemWithOrder('no Capricciosa, only Margherita left');
-        expect($log.warn.logs).toContain(['Pawel is hungry because: no Capricciosa, only Margherita left']);
-      });
-
-      it('should illustrate recovery from promise rejection', function () {
-
-        var retry = function(reason) {
-          return pizzaPit.takeOrder('Margherita').then(slice);
-        };
-        pizzaPit.takeOrder('Capricciosa').then(slice, retry).then(pawel.eat, pawel.beHungry);
-
-        pizzaPit.problemWithOrder('no Capricciosa, only Margherita left');
-        pizzaPit.deliverOrder();
-
-        expect($log.info.logs).toContain(['Pawel is eating delicious sliced Margherita']);
-      });
-
-      it('should illustrate explicit rejection in chain', function () {
-
-        var explain = function(reason) {
-          return $q.reject('ordered pizza not available');
-        };
-
-        pizzaPit.takeOrder('Capricciosa').then(slice, explain).then(pawel.eat, pawel.beHungry);
-        pizzaPit.problemWithOrder('no Capricciosa, only Margherita left');
-
-        expect($log.warn.logs).toContain(['Pawel is hungry because: ordered pizza not available']);
-      });
-
-      it('should illustrate promise aggregation', function () {
-
-        var ordersDelivered = $q.all([
-          pizzaPit.takeOrder('Pepperoni'),
-          saladBar.takeOrder('Fresh salad')
-        ]);
-
-        ordersDelivered.then(pawel.eat);
-
-        pizzaPit.deliverOrder();
-        saladBar.deliverOrder();
-        expect($log.info.logs).toContain(['Pawel is eating delicious Pepperoni,Fresh salad']);
-      });
-
-      it('should illustrate promise aggregation when one of the promises fail', function () {
-
-        var ordersDelivered = $q.all([
-          pizzaPit.takeOrder('Pepperoni'),
-          saladBar.takeOrder('Fresh salad')
-        ]);
-
-        ordersDelivered.then(pawel.eat, pawel.beHungry);
-
-        pizzaPit.deliverOrder();
-        saladBar.problemWithOrder('no fresh lettuce');
-        expect($log.warn.logs).toContain(['Pawel is hungry because: no fresh lettuce']);
-      });
-
-      it('should illustrate promise aggregation with $q.when', function () {
-
-        var ordersDelivered = $q.all([
-          pizzaPit.takeOrder('Pepperoni'),
-          $q.when('home made salad')
-        ]);
-
-        ordersDelivered.then(pawel.eat, pawel.beHungry);
-
-        pizzaPit.deliverOrder();
-        expect($log.info.logs).toContain(['Pawel is eating delicious Pepperoni,home made salad']);
-      });
-    });
-  });
 });
