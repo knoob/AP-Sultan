@@ -21,7 +21,6 @@ describe('Sentinel Environment Service', function ()
     }),
 
 
-
     describe('SentinelEnvironmentService object', function ()
     {
         var sentinelEnvironmentService;
@@ -64,6 +63,26 @@ describe('Sentinel Environment Service', function ()
             expect(returnedEnv1).toEqual(undefined);
             expect(allEnvs[0].EnvironmentName).toEqual("envNamex");
         });
+
+        it('Should allow you to specify a subset of "Active" environments', function ()
+        {
+            var env1 = new SentinelEnvironment("envNamex1", "dbServerx1", "dbCatalogx1", "srcPathx1", "archPathx1", "xsdPathx1");
+            sentinelEnvironmentService.addEnvironment(env1);
+            var env2 = new SentinelEnvironment("envNamex2", "dbServerx2", "dbCatalogx2", "srcPathx2", "archPathx2", "xsdPathx2");
+            sentinelEnvironmentService.addEnvironment(env2);
+            var isActive1 = sentinelEnvironmentService.setEnvironmentActive(env1);
+            expect(isActive1).toEqual(true);
+            var allEnvs = sentinelEnvironmentService.getAllEnvironments();
+            expect(allEnvs[0].isActive).toEqual(true);
+            expect(allEnvs[1].isActive).toBeFalsy();
+
+            var isActive2 = sentinelEnvironmentService.setEnvironmentActive(env2);
+            expect(isActive2).toEqual(true);
+            var allEnvs = sentinelEnvironmentService.getAllEnvironments();
+            expect(allEnvs[0].isActive).toEqual(true);
+            expect(allEnvs[1].isActive).toEqual(true);
+        });
+
         it('Should allow you to specify a subset of "Active" environments', function ()
         {
             var env1 = new SentinelEnvironment("envNamex1", "dbServerx1", "dbCatalogx1", "srcPathx1", "archPathx1", "xsdPathx1");
@@ -84,6 +103,9 @@ describe('Sentinel Environment Service', function ()
         });
 
     }),
+
+
+
 
     describe('A Single Sentinel Environment Entity (SentinelEnvironment)', function ()
     {
