@@ -9,6 +9,7 @@
     <script src="../../../vendor/angular-1.2.0-rc.2/angular-mocks.js"></script>
     <script src="../../../src/app/common/CommonEntities.js"></script>
     <script src="../SultanApp.js"></script>
+    <script src="EnvironmentSelectorDirective.js"></script>
     <script src="SentinelEnvironment.spec.js"></script>
 </head>
 <body>
@@ -19,5 +20,8 @@
     jasmineEnv.execute();
 </script>
        <h4>Environment Selector Directive Demo</h4>
+    <div data-ng-app="sultanApp">
+    <div data-EnvironmentSelector></div>
+    </div>
 </body>
 </html>
