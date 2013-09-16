@@ -1,5 +1,5 @@
-sultanApp.directive('EnvironmentSelector', function factory(injectables)
-{
+sultanApp.directive('EnvironmentSelector', function factory() {
+    alert('hello');
     var directiveDefintionObject =
 {
     priority: 0,
@@ -8,8 +8,11 @@ sultanApp.directive('EnvironmentSelector', function factory(injectables)
     // templateUrl: 'directive.html', // or // function(tElement, tAttrs) { ... },
     replace: false,
     transclude: false,
-    restrict: 'A',
+    restrict: 'E',
     scope: false,
+    compile: function (elelment, attributes) {
+        element.addClass('btn');
+    },
     controller: function ($scope, $element, $attrs, $transclude, otherInjectables) { }
 }
     return directiveDefintionObject;
