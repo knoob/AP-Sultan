@@ -3,6 +3,7 @@ sultanApp.directive('button', function factory() {
         restrict: 'E',
         compile: function (element, attributes) {
             element.addClass('btn');
+            element.val("xabcdefg");
             if (attributes.type == 'submit') {
                 element.addClass('btn-primary');
             }
