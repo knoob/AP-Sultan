@@ -11,13 +11,13 @@ describe('EnvironmentSelector Directive', function () {
     it('Should be testable, callable in a testx', function () {
         var linkingFn = $compile('<button></button>')
         element = linkingFn($rootScope);
-        alert($rootScope);
+        //alert($rootScope);
         expect(element.hasClass('btn')).toBe(true);
     });
     it('Should be able to have access to sentinelEnvironmentService', function () {
         var linkingFn = $compile('<button></button>')
         element = linkingFn($rootScope);
-        alert($rootScope);
+        //alert($rootScope);
         expect(element.hasClass('btn')).toBe(true);
     });
 })
